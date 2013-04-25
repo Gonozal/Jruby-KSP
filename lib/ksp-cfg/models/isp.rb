@@ -1,4 +1,5 @@
-class Isp
-  attr_accessor :atmosphere, :vacuum
-
+module KspCfg
+  class Isp
+    attr_accessor :atmosphere, :vacuum
+  end
 end

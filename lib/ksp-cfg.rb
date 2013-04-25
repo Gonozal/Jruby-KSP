@@ -1,9 +1,15 @@
 # require "java"
-Dir["ksp-cfg/models/*.rb"].each {|file| require file }
+Dir["#{__dir__}/ksp-cfg/models/*.rb"].each do |file|
+  puts file
+  require file
+end
 
 require "treetop"
 require "polyglot"
-require_relative "ksp-dfg/treetop/cfg_parser"
+require "#{__dir__}/ksp-cfg/treetop/cfg_parser"
 
-
-Parser.new("src/parts/example.cfg")
+module KspCfg
+  def self.parse( path )
+    Parser.new("src/parts/example.cfg")
+  end
+end

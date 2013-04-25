@@ -1,22 +1,32 @@
-class Parser
-  attr_accessor :file_content
-  def initialize(relative_path)
-    self.file_content = ""
-    read_file(relative_path)
+module KspCfg
+  class Parser
+    def initialize(relative_path)
+      file_content = read_file(relative_path)
 
-    cfg_parser = CfgParserParser.new
-    puts cfg_parser.parse(file_content).resolve
-  end
-
-
-  def read_file(path)
-    File.open(path, "r+").each do |line|
-      self.file_content << line
+      cfg_parser = CfgParserParser.new
+      cfg_parser.parse(file_content).resolve
     end
-    file_content
+
+    def self.parse( str )
+      parser = CfgParserParser.new
+      result = parser.parse( str )
+      if !result
+        raise ParserException.new( parser.failure_reason, parser.failure_line, parser.failure_column )
+      end
+      result.resolve
+    end
+
+    def read_file(path)
+      File.open(path, "r+").each do |line|
+        self.file_content << line
+      end
+      file_content
+    end
   end
 
-  def parse
-
+  class ParserException < Exception
+    def initialize( msg, line, column )
+      super( "Error: #{msg} (at line #{line}, column #{column})" )
+    end
   end
 end

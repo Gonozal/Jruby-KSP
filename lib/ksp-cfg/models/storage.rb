@@ -1,3 +1,5 @@
-class Storage
-  attr_accessor :fuel
+module KspCfg
+  class Storage
+    attr_accessor :fuel
+  end
 end
