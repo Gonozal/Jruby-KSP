@@ -33,7 +33,7 @@ module KspCfg
       end
 
       rule :assignments do
-        assignment_line >> (newline >> assignment_line.maybe).repeat.maybe
+        assignment_line >> (newline >> assignment_line).repeat.maybe
       end
 
       rule :document do
