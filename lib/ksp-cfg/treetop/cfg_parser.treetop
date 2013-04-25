@@ -24,7 +24,6 @@ grammar CfgParser
     }
   end
 
-
   rule value
     spaces string spaces {
       def resolve
@@ -38,7 +37,7 @@ grammar CfgParser
   end
 
   rule newline
-    [\n]+
+    ( spaces [\n] spaces )+
   end
 
   rule string

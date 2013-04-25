@@ -1,8 +1,7 @@
 # A sample Gemfile
 source "https://rubygems.org"
 
-gem 'treetop'
-gem 'polyglot'
+gem 'parslet'
 
 # testing
 gem 'rspec'
