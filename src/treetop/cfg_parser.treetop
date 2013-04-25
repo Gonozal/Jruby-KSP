@@ -24,7 +24,6 @@ grammar CfgParser
     }
   end
 
-
   rule value
     spaces string spaces {
       def resolve

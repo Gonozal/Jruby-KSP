@@ -1,0 +1,17 @@
+GEM
+  specs:
+    polyglot (0.3.3)
+    rawr (1.2)
+      rubyzip
+    rubyzip (0.9.9)
+    treetop (1.4.12)
+      polyglot
+      polyglot (>= 0.3.1)
+
+PLATFORMS
+  java
+
+DEPENDENCIES
+  polyglot
+  rawr
+  treetop
