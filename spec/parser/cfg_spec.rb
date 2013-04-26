@@ -12,7 +12,9 @@ describe KspCfg::Parser::Cfg do
   let(:assignment_int)      { "name = 20" }
   let(:assignment_bool)     { "name = true" }
   let(:assignment_float)    { "name = -20.5" }
-  let(:assignment_sentence) { "name = value" }
+  let(:assignment_sentence) { "name = some cool stuff" }
+  let(:value_list)          { "name = 12.5, 3" }
+  let(:value_list_long )    { "name = 12.5, 3, some_stuff, False" }
 
   # simple blocks
   let(:block_empty)         { "NAME_OF_BLOCK\n{\n}" }
@@ -62,6 +64,30 @@ describe KspCfg::Parser::Cfg do
         value: { string: 'value' }
       })
     end
+
+    it "parses a short value list" do
+      parser.statements.should parse(value_list).as({
+        key: 'name',
+        value: [ 
+          { float: "12.5" },
+          { integer: "3" }
+        ]
+      })
+    end
+
+  let(:value_list_long )    { "name = 12.5, 3, some_stuff, False" }
+    it "parses a long value list" do
+      parser.statements.should parse(value_list_long).as({
+        key: 'name',
+        value: [ 
+          { float: "12.5" },
+          { integer: "3" },
+          { string: "some_stuff" },
+          { boolean: "False" }
+        ]
+      })
+    end
+
     it "parses an empty block" do
       parser.statement.should parse(block_empty).as({
         block_name: 'NAME_OF_BLOCK',
@@ -272,30 +298,6 @@ describe KspCfg::Parser::Cfg do
           }
         ]
       })
-    end
-  end
-
-  describe "document" do
-    it "parses a sample document correctly" do
-      content = <<-EOT
-        // Kerbal Space Program - Part Config
-        // LV-T30 Liquid Fuel Engine
-        // 
-
-        // --- general parameters ---
-        name = liquidEngine
-        module = Part
-        author = NovaSilisko
-
-        // --- asset parameters ---
-        mesh = model.mu
-        scale = 0.1
-
-
-        // --- node definitions ---
-        node_stack_top = 0.0, 7
-      EOT
-      parser.statements.should parse( content ).as({})
     end
   end
 end
