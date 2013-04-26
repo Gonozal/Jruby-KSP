@@ -5,7 +5,6 @@ end
 module KspCfg
   module Parser
     def self.parse_file(relative_path)
-      file_content = ""
       File.open(path, "r+").each do |line|
         file_content << line
       end
