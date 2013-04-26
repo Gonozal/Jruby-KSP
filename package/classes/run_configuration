@@ -1,3 +1,11 @@
+c.project_name = 'ChangeMe'
+c.output_dir = 'package'
+
 load_path_slash:/
-main_ruby_file: main
-source_dirs: src
+main_ruby_file: ksp-cfg
+# c.main_java_file = 'org.rubyforge.rawr.Main'
+c.source_dirs = ['src', 'lib']
+
+c.compile_ruby_files = true
+
+c.target_jvm_version = 1.6
