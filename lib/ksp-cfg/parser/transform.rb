@@ -24,7 +24,16 @@ module KspCfg
         {}.tap do |context|
           assignments.each do |assignment|
             key, value = assignment.first
-            context[key.to_s] = value
+            if context.has_key? key.to_sym
+              if context[key.to_sym].kind_of? Array
+                context[key.to_sym] << value
+              else
+                context[key.to_sym] = [context[key.to_sym]]
+                context[key.to_sym] << value
+              end
+            else
+              context[key.to_sym] = value
+            end
           end
         end
       end
