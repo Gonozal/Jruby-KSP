@@ -19,8 +19,11 @@ describe KspCfg::Parser::Cfg do
   let(:block_assignment)    { "NAME_OF_BLOCK\n{\nname=value\n}" }
 
   # paired assignments
+  let(:assignment_spaced)   { "\n\nkey1 = value1\n\n\n\nkey2 = value2\n\n" }
   let(:assignment_pair)     { "key1 = value1\nkey2 = value2" }
   let(:block_pair)          { "key1 = value1\nkey2 = value2" }
+
+  # whitespace assignments
 
   describe :assignment do
     it "parses a string" do
@@ -68,19 +71,15 @@ describe KspCfg::Parser::Cfg do
   end
 
   describe :statements do
-    it "parses a single statement" do
-      parser.statement.should parse('some_key = some_value').as({
-        key: 'some_key',
-        value: { string: 'some_value' }
+    it "parses a single assignment" do
+      parser.statements.should parse(assignment).as({
+        key: 'name',
+        value: { string: 'value' }
       })
     end
 
     it "parses a set of assignments" do
-      content = <<-EOT
-        key1 = value1
-        key2 = value2
-      EOT
-      parser.statements.should parse( content ).as([{
+      parser.statements.should parse( assignment_pair ).as([{
         key: 'key1',
         value: { string: 'value1' }
       }, {
@@ -90,23 +89,7 @@ describe KspCfg::Parser::Cfg do
     end
 
     it "can handle multiple newlines" do
-      content = <<-EOT
-
-
-
-
-
-        key1 = value1
-
-
-
-        key2 = value2
-
-
-
-
-      EOT
-      parser.statements.should parse( content ).as([{
+      parser.statements.should parse( assignment_spaced ).as([{
         key: 'key1',
         value: { string: 'value1' }
       }, {
