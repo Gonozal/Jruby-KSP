@@ -67,12 +67,16 @@ module KspCfg
       ###############################################################
       # ASSIGNMENTS
       rule :assignment do
-        spaced(key) >> str("=") >> spaced(value)
+        spaced(key) >> str("=") >> (spaced(value) | spaced(value_list))
       end
 
       # Values can be any data type, keys only strings without spaces
       rule(:value) do
-        ( float | integer | boolean | string ).as(:value)
+        (( float | integer | boolean | string )).as(:value)
+      end
+
+      rule :value_list do
+        value >> (spaced(str(",")) >> value).repeat
       end
 
       rule :key do

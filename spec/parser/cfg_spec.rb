@@ -274,5 +274,29 @@ describe KspCfg::Parser::Cfg do
       })
     end
   end
+
+  describe "document" do
+    it "parses a sample document correctly" do
+      content = <<-EOT
+        // Kerbal Space Program - Part Config
+        // LV-T30 Liquid Fuel Engine
+        // 
+
+        // --- general parameters ---
+        name = liquidEngine
+        module = Part
+        author = NovaSilisko
+
+        // --- asset parameters ---
+        mesh = model.mu
+        scale = 0.1
+
+
+        // --- node definitions ---
+        node_stack_top = 0.0, 7
+      EOT
+      parser.statements.should parse( content ).as({})
+    end
+  end
 end
 
