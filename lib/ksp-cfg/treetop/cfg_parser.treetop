@@ -1,0 +1,50 @@
+# Treetop grammar for JSON.
+grammar CfgParser
+  rule pair_list
+    pair !(newline) {
+      def resolve
+        { pair.resolve[0] => pair.resolve[1] }
+      end
+    }
+    /
+    pair newline pair_list {
+      def resolve
+        hash = pair_list.resolve
+        hash[pair.resolve[0]] = pair.resolve[1]
+        hash
+      end
+    }
+  end
+
+  rule pair
+    spaces string spaces "=" spaces value spaces {
+      def resolve
+        [ string.resolve, value.resolve ]
+      end
+    }
+  end
+
+  rule value
+    spaces string spaces {
+      def resolve
+        string.resolve
+      end
+    }
+  end
+
+  rule spaces
+    [ \s\t]*
+  end
+
+  rule newline
+    ( spaces [\n] spaces )+
+  end
+
+  rule string
+    [A-Za-z_-] [A-Za-z0-9_-]* {
+      def resolve
+        text_value
+      end
+    }
+  end
+end
