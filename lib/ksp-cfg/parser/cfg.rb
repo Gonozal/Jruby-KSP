@@ -52,6 +52,7 @@ module KspCfg
       ###############################################################
       # STATEMENTS
       rule :statements do
+        line_separator.repeat.maybe >> 
         statement >> (line_separator >> statement).repeat >> line_separator.maybe
       end
 
