@@ -5,26 +5,82 @@ require 'pp'
 
 describe KspCfg::Parser::Cfg do
 
-  let(:parser) { KspCfg::Parser::Cfg.new }
-  it "parses a pair" do
-    parser.statement.should parse('some_key = some_value').as({
-      key: 'some_key',
-      value: { string: 'some_value' }
-    })
+  let(:parser)              { KspCfg::Parser::Cfg.new }
+
+  # basic assignments
+  let(:assignment)          { "name = value" }
+  let(:assignment_int)      { "name = 20" }
+  let(:assignment_bool)     { "name = true" }
+  let(:assignment_float)    { "name = -20.5" }
+  let(:assignment_sentence) { "name = value" }
+
+  # simple blocks
+  let(:block_empty)         { "NAME_OF_BLOCK\n{\n}" }
+  let(:block_assignment)    { "NAME_OF_BLOCK\n{\nname=value\n}" }
+
+  # paired assignments
+  let(:assignment_pair)     { "key1 = value1\nkey2 = value2" }
+  let(:block_pair)          { "key1 = value1\nkey2 = value2" }
+
+  describe "#assignment" do
+    it "parses a string" do
+      parser.assignment.should parse(assignment).as({
+        key: 'name',
+        value: { string: 'value' }
+      })
+    end
+
+    it "parses an integer" do
+      parser.assignment.should parse(assignment_int).as({
+        key: 'name',
+        value: { integer: '20' }
+      })
+    end
+
+    it "parses a float" do
+      parser.assignment.should parse(assignment_float).as({
+        key: 'name',
+        value: { float: '-20.5' }
+      })
+    end
+
+    it "parses a boolean value" do
+      parser.assignment.should parse(assignment_bool).as({
+        key: 'name',
+        value: { boolean: 'true' }
+      })
+    end
   end
 
-  it "parses a pair_list" do
-    content = <<-EOT
-      key1 = value1
-      key2 = value2
-    EOT
-    parser.statements.should parse( content ).as([{
-      key: 'key1',
-      value: { string: 'value1' }
-    }, {
-      key: 'key2',
-      value: { string: 'value2' }
-    }])
+  describe "#statement" do
+    it "parses a pair" do
+      parser.statement.should parse(assignment).as({
+        key: 'name',
+        value: { string: 'value' }
+      })
+    end
+    it "parses an empty block" do
+      parser.statement.should parse(block_empty).as({
+        block_name: 'NAME_OF_BLOCK',
+        block: nil
+      })
+    end
+  end
+
+  describe "#statements" do
+    it "parses a assignment pair" do
+      content = <<-EOT
+        key1 = value1
+        key2 = value2
+      EOT
+      parser.statements.should parse( content ).as([{
+        key: 'key1',
+        value: { string: 'value1' }
+      }, {
+        key: 'key2',
+        value: { string: 'value2' }
+      }])
+    end
   end
 
   it "parses a pair_list with whitespaces" do
@@ -69,19 +125,21 @@ describe KspCfg::Parser::Cfg do
     }]
   end
 
-  it "ignores commented lines inbetween" do
-    content = <<-EOT
-      key1 = value1
-      // key1 = value1
-      key2 = value2
-    EOT
-    parser.statements.parse( content ).should == [ {
-      key: 'key1',
-      value: { string: 'value1' }
-    }, {
-      key: 'key2',
-      value: { string: 'value2' }
-    }]
+  describe "#comment" do
+    it "ignores commented lines inbetween" do
+      content = <<-EOT
+        key1 = value1
+        // key1 = value1
+        key2 = value2
+      EOT
+      parser.statements.parse( content ).should == [ {
+        key: 'key1',
+        value: { string: 'value1' }
+      }, {
+        key: 'key2',
+        value: { string: 'value2' }
+      }]
+    end
   end
 
   describe "blocks" do
