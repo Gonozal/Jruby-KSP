@@ -10,9 +10,10 @@ module KspCfg
       rule(:space)      { match('[ \t ]').repeat(1) }
       rule(:space?)     { space.maybe }
       rule(:newline)    { match('[\r\n]') }
+      rule(:eof)        { match('\z') }
 
       rule(:line_separator) do
-        (space? >> (comment.maybe >> newline)).repeat(1)
+        (space? >> ((comment.maybe >> newline) | comment >> eof)).repeat(1)
       end
 
       rule(:blank) { line_separator | space }
@@ -39,7 +40,7 @@ module KspCfg
       end
 
       rule(:string) do
-        (match('[A-Za-z]') >> match('[ A-Za-z0-9_-]').repeat).as(:string)
+        (match('[A-Za-z]') >> (space? >> match('[A-Za-z0-9_-]')).repeat).as(:string)
       end
 
 

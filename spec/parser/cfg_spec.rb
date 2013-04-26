@@ -16,10 +16,10 @@ describe KspCfg::Parser::Cfg do
 
   # simple blocks
   let(:block_empty)         { "NAME_OF_BLOCK\n{\n}" }
-  let(:block_assignment)    { "NAME_OF_BLOCK\n{\nname=value\n}" }
+  let(:block_assignment)    { "NAME_OF_BLOCK\n{\n#{assignment_pair}\n}" }
 
   # paired assignments
-  let(:assignment_spaced)   { "\n\nkey1 = value1\n\n\n\nkey2 = value2\n\n" }
+  let(:assignment_spaced)   { "\n\n key1 = value1   \n\n\n   key2   =   value2\n\n" }
   let(:assignment_pair)     { "key1 = value1\nkey2 = value2" }
   let(:block_pair)          { "key1 = value1\nkey2 = value2" }
 
@@ -88,17 +88,7 @@ describe KspCfg::Parser::Cfg do
       }])
     end
 
-    it "can handle multiple newlines" do
-      parser.statements.should parse( assignment_spaced ).as([{
-        key: 'key1',
-        value: { string: 'value1' }
-      }, {
-        key: 'key2',
-        value: { string: 'value2' }
-      }])
-    end
-
-    it "parses statements with whitespaces" do
+    it "parses statements with whitespaces and newlines" do
       content = <<-EOT
         key1 = value1
         key2 = va lu e2
@@ -111,38 +101,10 @@ describe KspCfg::Parser::Cfg do
         value: { string: 'va lu e2' }
       }]
     end
-
-    it "parses a float set" do
-      content = <<-EOT
-        key1 = 12.5
-        key2 = -12.5
-      EOT
-      parser.statements.should parse( content ).as([{
-        key: 'key1',
-        value: { float: '12.5' }
-      }, {
-        key: 'key2',
-        value: { float: '-12.5' }
-      }])
-    end
-
-    it "parses a boolean set" do
-      content = <<-EOT
-        key1 = false
-        key2 = True
-      EOT
-      parser.statements.parse( content ).should == [ {
-        key: 'key1',
-        value: { boolean: 'false' }
-      }, {
-        key: 'key2',
-        value: { boolean: 'True' }
-      }]
-    end
   end
 
-  describe "comments" do
-    it "ignores commented at the beginning" do
+  describe :comments do
+    it "parses commented at the beginning" do
       content = <<-EOT
         // key1 = value1
         key2 = value2
@@ -151,6 +113,27 @@ describe KspCfg::Parser::Cfg do
         key: 'key2',
         value: { string: 'value2' }
       }
+    end
+
+    it "parses inline comments" do
+      commented_assignment = assignment + " // comment "
+      parser.statements.parse( commented_assignment ).should == {
+        key: 'name',
+        value: { string: 'value' }
+      }
+    end
+
+    it "parses multiple inline comments" do
+      commented_assignment = assignment + " // comment \n"
+      commented_assignment << assignment + " // comment "
+      parser.statements.parse( commented_assignment ).should == [{
+        key: 'name',
+        value: { string: 'value' }
+      },
+      {
+        key: 'name',
+        value: { string: 'value' }
+      }]
     end
 
     it "ignores a whole lot of comments all over the pace" do
@@ -189,23 +172,22 @@ describe KspCfg::Parser::Cfg do
 
   describe "blocks" do
     it 'parses a block name' do
-      content = "  MODULE "
-      parser.block_name.parse( content ).should == { block_name: "MODULE" }
+      parser.block_name.parse("  MODULE ").should == { block_name: "MODULE" }
+    end
+
+    it "parses an empty block" do
+      parser.block.should parse( block_empty ).as({
+        block_name: "NAME_OF_BLOCK",
+        block: nil
+      })
     end
 
     it "parses a block" do
-      content = <<-EOT
-        MODULE
-        {
-          name = value1
-          key2 = value2
-        }
-      EOT
-      parser.statements.should parse( content ).as({
-        block_name: "MODULE",
+      parser.block.should parse( block_assignment ).as({
+        block_name: "NAME_OF_BLOCK",
         block: [
           {
-            key: 'name',
+            key: 'key1',
             value: { string: 'value1' }
           }, {
             key: 'key2',
@@ -216,8 +198,7 @@ describe KspCfg::Parser::Cfg do
     end
 
     it "parses nested blocks" do
-      content = <<-EOT
-        MODULE
+      content = %(MODULE
         {
           key1 = value1
           PROPELLANT
@@ -225,9 +206,8 @@ describe KspCfg::Parser::Cfg do
             name = kethane
           }
           key2 = value2
-        }
-      EOT
-      parser.statements.should parse( content ).as({
+        })
+      parser.block.should parse( content ).as({
         block_name: "MODULE",
         block: [
           {
@@ -254,14 +234,8 @@ describe KspCfg::Parser::Cfg do
         MODULE
         {
           key1 = value1
-          PROPELLANT
-          {
-            name = kethane
-          }
-          PROPELLANT
-          {
-            name = kethane
-          }
+          #{block_assignment}
+          #{block_assignment}
           key2 = value2
         }
       EOT
@@ -273,18 +247,24 @@ describe KspCfg::Parser::Cfg do
             value: { string: 'value1' }
           },
           {
-            block_name: 'PROPELLANT',
-            block: {
-              key: 'name',
-              value: { string: 'kethane' }
-            }
+            block_name: 'NAME_OF_BLOCK',
+            block: [{
+              key: 'key1',
+              value: { string: 'value1' }
+            }, {
+              key: 'key2',
+              value: { string: 'value2' }
+            }]
           },
           {
-            block_name: 'PROPELLANT',
-            block: {
-              key: 'name',
-              value: { string: 'kethane' }
-            }
+            block_name: 'NAME_OF_BLOCK',
+            block: [{
+              key: 'key1',
+              value: { string: 'value1' }
+            }, {
+              key: 'key2',
+              value: { string: 'value2' }
+            }]
           },
           {
             key: 'key2',
