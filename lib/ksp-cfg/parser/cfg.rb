@@ -27,7 +27,8 @@ module KspCfg
       ###############################################################
       # DATA TYPES
       rule(:integer) do
-        (str("-").maybe >> match["1-9"] >> digit.repeat).as(:integer)
+        (str("-").maybe >> ((match["1-9"] >> digit.repeat) | str("0"))).as(:integer) >>
+        space.absent?
       end
 
       rule(:float) do
@@ -40,7 +41,8 @@ module KspCfg
       end
 
       rule(:string) do
-        (match('[A-Za-z]') >> (space? >> match('[A-Za-z0-9_-]')).repeat).as(:string)
+        (match('[0-9A-Za-z]') >> 
+         (space? >> match('[ A-Za-z0-9%"\'._-]')).repeat).as(:string)
       end
 
 

@@ -13,8 +13,11 @@ describe KspCfg::Parser::Cfg do
   let(:assignment_bool)     { "name = true" }
   let(:assignment_float)    { "name = -20.5" }
   let(:assignment_sentence) { "name = some cool stuff" }
+  let(:assignment_dots)     { "name = some.cool.stuff" }
   let(:value_list)          { "name = 12.5, 3" }
-  let(:value_list_long )    { "name = 12.5, 3, some_stuff, False" }
+  let(:spaced_list)         { "key = 12 3" }
+  let(:unspaced_value_list) { "name = 1,3,5,6,7" }
+  let(:value_list_long )    { "name = 12.5,  3,  some_stuff, False" }
 
   # simple blocks
   let(:block_empty)         { "NAME_OF_BLOCK\n{\n}" }
@@ -24,6 +27,60 @@ describe KspCfg::Parser::Cfg do
   let(:assignment_spaced)   { "\n\n key1 = value1   \n\n\n   key2   =   value2\n\n" }
   let(:assignment_pair)     { "key1 = value1\nkey2 = value2" }
   let(:block_pair)          { "key1 = value1\nkey2 = value2" }
+  let(:document)            { 
+  <<-EOT
+    // Kerbal Space Program - Part Config
+    // LV-T30 Liquid Fuel Engine
+    // 
+
+    // --- general parameters ---
+    name = liquidEngine
+    module = Part
+    author = NovaSilisko
+
+    // --- asset parameters ---
+    mesh = model.mu
+    scale = 0.1
+
+
+    // --- node definitions ---
+    node_stack_top = 0.0, 7.21461, 0.0, 0.0, 1.0, 0.0
+    fx_exhaustSparks_flameout = 0.0, -10.3, 0.0, 0.0, 1.0, 0.0, flameout
+    sound_vent_medium = engage
+    sound_rocket_hard = running
+    sound_vent_soft = disengage
+    sound_explosion_low = flameout
+    description = Although criticized by some due to its not unsignificant use of so-called "pieces found lying about", the LV-T series has proven itself as a comparatively reliable engine. The T30 model boasts a failure ratio below the 50% mark. This has been considered a major improvement over previous models by engineers and LV-T enthusiasts.
+    // attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
+    attachRules = 1,0,1,0,0
+    stagingIcon = LIQUID_ENGINE
+
+    attachRules = 1,0,1,0,0
+
+    MODULE
+    {
+      name = ModuleEngines
+      exhaustDamage = True
+      fxOffset = 0, 0, 0.8
+      PROPELLANT
+      {
+        name = LiquidFuel
+                    ratio = 0.9
+        DrawGauge = True
+      }
+      PROPELLANT
+      {
+        name = Oxidizer
+        ratio = 1.1
+      }
+      atmosphereCurve
+      {
+         key = 0 370
+         key = 1 320
+      }
+    }
+  EOT
+  }
 
   # whitespace assignments
 
@@ -32,6 +89,20 @@ describe KspCfg::Parser::Cfg do
       parser.assignment.should parse(assignment).as({
         key: 'name',
         value: { string: 'value' }
+      })
+    end
+
+    it "parses a string with dots" do
+      parser.assignment.should parse(assignment_dots).as({
+        key: 'name',
+        value: { string: 'some.cool.stuff' }
+      })
+    end
+
+    it "parses a string with spaces" do
+      parser.assignment.should parse(assignment_sentence).as({
+        key: 'name',
+        value: { string: 'some cool stuff' }
       })
     end
 
@@ -75,7 +146,26 @@ describe KspCfg::Parser::Cfg do
       })
     end
 
-  let(:value_list_long )    { "name = 12.5, 3, some_stuff, False" }
+    it "parses a short space seperated list" do
+      parser.statements.should parse(spaced_list).as({
+        key: 'key',
+        value: { string: "12 3"}
+      })
+    end
+
+    it "parses a value list without spaces" do
+      parser.statements.should parse(unspaced_value_list).as({
+        key: 'name',
+        value: [ 
+          { integer: "1" },
+          { integer: "3" },
+          { integer: "5" },
+          { integer: "6" },
+          { integer: "7" }
+        ]
+      })
+    end
+
     it "parses a long value list" do
       parser.statements.should parse(value_list_long).as({
         key: 'name',
@@ -298,6 +388,12 @@ describe KspCfg::Parser::Cfg do
           }
         ]
       })
+    end
+  end
+
+  describe "document" do
+    it "Does not fail parsing on a real document" do
+      parser.statements.should_not be_nil
     end
   end
 end
