@@ -4,7 +4,7 @@ module KspCfg
       rule(integer:       simple(:n))       { Integer(n) }
       rule(float:         simple(:n))       { Float(n) }
       rule(boolean:       simple(:b))       { b == "true" or b == "True" }
-      rule(string:        simple(:st))      { st }
+      rule(string:        simple(:st))      { String.try_convert(st) }
 
       rule(value:         subtree(:a))      { a }
 
@@ -14,13 +14,21 @@ module KspCfg
 
       rule(block_name: simple(:block_name), block: subtree(:values)) do |dict|
         if dict[:values].kind_of? Array
-          { dict[:block_name].to_sym => combine_assignments(dict[:values]) }
+          { dict[:block_name].to_sym => combine_blocks(dict[:values]) }
         else
           { dict[:block_name].to_sym => dict[:values] }
         end
       end
 
-      def self.combine_assignments(assignments)
+      rule(document: subtree(:contents)) do |dict|
+        if dict[:contents].kind_of? Array
+          { document: combine_blocks(dict[:contents])}
+        else
+          { document: dict[:contents]}
+        end
+      end
+
+      def self.combine_blocks(assignments)
         {}.tap do |context|
           assignments.each do |assignment|
             key, value = assignment.first
