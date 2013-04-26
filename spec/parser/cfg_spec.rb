@@ -98,7 +98,7 @@ describe KspCfg::Parser::Cfg do
           key2 = value2
         }
       EOT
-      parser.block.parse( content ).should == {
+      parser.statements.should parse( content ).as({
         block_name: "MODULE",
         block: [
           {
@@ -109,14 +109,14 @@ describe KspCfg::Parser::Cfg do
             value: { string: 'value2' }
           }
         ]
-      }
+      })
     end
 
     it "parses nested blocks" do
       content = <<-EOT
         MODULE
         {
-          name = value1
+          key1 = value1
           PROPELLANT
           {
             name = kethane
@@ -124,20 +124,26 @@ describe KspCfg::Parser::Cfg do
           key2 = value2
         }
       EOT
-      pp parser.block.parse_with_debug( content )
-      parser.block.parse( content ).should == {
+      parser.statements.should parse( content ).as({
         block_name: "MODULE",
         block: [
           {
-            key: 'name',
+            key: 'key1',
             value: { string: 'value1' }
+          },
+          {
+            block_name: 'PROPELLANT',
+            block: {
+              key: 'name',
+              value: { string: 'kethane' }
+            }
           },
           {
             key: 'key2',
             value: { string: 'value2' }
           }
         ]
-      }
+      })
     end
   end
 end

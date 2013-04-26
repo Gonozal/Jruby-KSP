@@ -2,9 +2,6 @@ module KspCfg
   module Parser
     class Cfg < Parslet::Parser
 
-      def spaced( atom )
-        space? >> atom >> space?
-      end
 
       ###############################################################
       # ATOMICS, BASICS
@@ -20,6 +17,10 @@ module KspCfg
 
       rule(:blank) { line_separator | space }
       rule(:blank?) { blank.maybe }
+
+      def spaced( atom )
+        space? >> atom >> space?
+      end
 
 
       ###############################################################
@@ -41,10 +42,12 @@ module KspCfg
         (match('[A-Za-z]') >> match('[ A-Za-z0-9_-]').repeat).as(:string)
       end
 
+
       ###############################################################
       # COMMENTS
       rule(:comment)  { str('//') >> match('[^\r\n]').repeat }
       rule(:comment?) { comment.maybe }
+
 
       ###############################################################
       # STATEMENTS
@@ -55,6 +58,7 @@ module KspCfg
       rule :statement do
         block | assignment
       end
+
 
       ###############################################################
       # ASSIGNMENTS
@@ -83,16 +87,17 @@ module KspCfg
       end
 
       rule :opening_brace do
-        newline.maybe >> spaced(str("{")) >> newline.maybe
+        line_separator.maybe >> spaced(str("{")) >> line_separator.maybe
       end
 
       rule :closing_brace do
-        newline.maybe >> spaced(str("}")) >> newline
+        line_separator.maybe >> spaced(str("}"))
       end
 
       def braced( atom )
         opening_brace >> atom >> closing_brace
       end
+
 
       ###############################################################
       # THE DOCUMENT
