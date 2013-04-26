@@ -68,7 +68,7 @@ describe KspCfg::Parser::Cfg do
     it "parses a short value list" do
       parser.statements.should parse(value_list).as({
         key: 'name',
-        value: [ 
+        value: [
           { float: "12.5" },
           { integer: "3" }
         ]
@@ -79,7 +79,7 @@ describe KspCfg::Parser::Cfg do
     it "parses a long value list" do
       parser.statements.should parse(value_list_long).as({
         key: 'name',
-        value: [ 
+        value: [
           { float: "12.5" },
           { integer: "3" },
           { string: "some_stuff" },
