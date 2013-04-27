@@ -27,6 +27,11 @@ MODULE
        	        ratio = 0.9
 		DrawGauge = True
 	}
+	PROPELLANT
+	{
+		name = Oxidizer
+       	        ratio = 1.1
+	}
 	atmosphereCurve
  	{
    	 key = 0 370
@@ -52,11 +57,16 @@ MODULE
         minThrust: 0,
         heatProduction: 400,
         fxOffset: [0, 0, 0.8],
-        PROPELLANT: {
-          name: "LiquidFuel",
-          ratio: 0.9,
-          DrawGauge: true
-        },
+        PROPELLANT: [
+          {
+            name: "LiquidFuel",
+            ratio: 0.9,
+            DrawGauge: true
+          }, {
+            name: "Oxidizer",
+            ratio: 1.1
+          }
+        ],
         atmosphereCurve: {
           key:  ["0 370", "1 320"]
         }
