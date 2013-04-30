@@ -2,7 +2,7 @@ configuration do |c|
 	# The name for your resulting application file (e.g., if the project_name is 'foo' then you'll get foo.jar, foo.exe, etc.)
 	# default value: "jruby_ksp"
 	#
-	#c.project_name = "jruby_ksp"
+	c.project_name = "ksp price balancer"
 
 	# Undocumented option 'output_dir'
 	# default value: "package"
@@ -42,7 +42,7 @@ configuration do |c|
 	# Whether Ruby source files should be compiled into .class files. Setting this to true currently breaks packaging
 	# default value: false
 	#
-	#c.compile_ruby_files = false
+	c.compile_ruby_files = false
 
 	# A list of individual Java library files to include.
 	# default value: []
