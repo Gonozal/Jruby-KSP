@@ -1,3 +1,3 @@
 load_path_slash:/
 main_ruby_file: main
-source_dirs: src;src/ksp-cfg;src/ksp-cfg/models;src/ksp-cfg/parser
+source_dirs: src

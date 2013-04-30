@@ -27,7 +27,7 @@ configuration do |c|
 	# A list of directories where source files reside
 	# default value: ["src"]
 	#
-	c.source_dirs = ["src", "src/ksp-cfg", "src/ksp-cfg/models", "src/ksp-cfg/parser"]
+	#c.source_dirs = ["src"]
 
 	# A list of regexps of files to exclude
 	# default value: []
@@ -52,7 +52,7 @@ configuration do |c|
 	# A list of directories for rawr to include . All files in the given directories get bundled up.
 	# default value: ["lib/java"]
 	#
-	#c.java_lib_dirs = ["lib/java"]
+	c.java_lib_dirs = ["lib/java"]
 
 	# A list of files that will be copied into the `<output_dir>/jar` folder.  Note that the files maintain their directory path when copied. 
 	# default value: []
@@ -67,7 +67,7 @@ configuration do |c|
 	# Undocumented option 'target_jvm_version'
 	# default value: 1.7
 	#
-	#c.target_jvm_version = 1.6
+	c.target_jvm_version = 1.7
 
 	# Undocumented option 'jvm_arguments'
 	# default value: ""
