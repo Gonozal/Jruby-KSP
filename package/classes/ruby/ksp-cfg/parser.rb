@@ -38,11 +38,5 @@ module KspCfg
         transform
       end
     end
-
-    class ParserException < Exception
-      def initialize( msg, line, column )
-        super( "Error: #{msg} (at line #{line}, column #{column})" )
-      end
-    end
   end
 end

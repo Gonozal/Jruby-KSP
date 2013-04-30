@@ -1,12 +1,4 @@
-require "java"
-require "parslet"
-require "pp"
-
-require_relative "ksp-cfg/models"
-require_relative "ksp-cfg/parser"
-
-
-class KspCfg
+module KspCfg
   def self.parse_all
     dir_path = File.dirname(__FILE__)
     path = "#{dir_path}/../../Parts/*/"

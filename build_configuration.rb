@@ -27,7 +27,7 @@ configuration do |c|
 	# A list of directories where source files reside
 	# default value: ["src"]
 	#
-	c.source_dirs = ["lib"]
+	c.source_dirs = ["src", "src/ksp-cfg", "src/ksp-cfg/models", "src/ksp-cfg/parser"]
 
 	# A list of regexps of files to exclude
 	# default value: []
@@ -67,7 +67,7 @@ configuration do |c|
 	# Undocumented option 'target_jvm_version'
 	# default value: 1.7
 	#
-	c.target_jvm_version = 1.6
+	#c.target_jvm_version = 1.6
 
 	# Undocumented option 'jvm_arguments'
 	# default value: ""
