@@ -27,7 +27,7 @@ configuration do |c|
 	# A list of directories where source files reside
 	# default value: ["src"]
 	#
-	#c.source_dirs = ["src", "src/models]
+	c.source_dirs = ["lib"]
 
 	# A list of regexps of files to exclude
 	# default value: []
@@ -67,7 +67,7 @@ configuration do |c|
 	# Undocumented option 'target_jvm_version'
 	# default value: 1.7
 	#
-	#c.target_jvm_version = 1.7
+	c.target_jvm_version = 1.6
 
 	# Undocumented option 'jvm_arguments'
 	# default value: ""

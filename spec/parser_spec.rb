@@ -6,12 +6,15 @@ describe KspCfg::Parser::Parser do
 
   let(:parser)                { KspCfg::Parser::Parser.new }
 
+  let(:mengine_path)          { "spec/fixtures/parts/mengine.cfg" }
+
   let(:file_path)             { "spec/fixtures/parts/example.cfg"}
   let(:file_content)          {
   <<-EOT
 name = liquidEngine
 // --- node definitions ---
 node_stack_top = 0.0, 7.21461, 0.0, 1.0
+mass = 3
 description = Although criticized by some 
 MODULE
 {
@@ -19,18 +22,19 @@ MODULE
 	exhaustDamage = True
 	ignitionThreshold = 0.1
 	minThrust = 0
+	maxThrust = 100
 	heatProduction = 400
 	fxOffset = 0, 0, 0.8
 	PROPELLANT
 	{
 		name = LiquidFuel
-       	        ratio = 0.9
+    ratio = 0.9
 		DrawGauge = True
 	}
 	PROPELLANT
 	{
 		name = Oxidizer
-       	        ratio = 1.1
+    ratio = 1.1
 	}
 	atmosphereCurve
  	{
@@ -40,7 +44,7 @@ MODULE
 }
 MODULE
 {
-      name = ModuleAnimateHeat
+    name = ModuleAnimateHeat
 }
   EOT
   }
@@ -49,12 +53,14 @@ MODULE
     document: {
       name: "liquidEngine",
       node_stack_top: [0.0, 7.21461, 0.0, 1.0],
+      mass: 3,
       description: "Although criticized by some",
       MODULE: [ {
         name: "ModuleEngines",
         exhaustDamage: true,
         ignitionThreshold: 0.1,
         minThrust: 0,
+        maxThrust: 100,
         heatProduction: 400,
         fxOffset: [0, 0, 0.8],
         PROPELLANT: [
@@ -78,11 +84,17 @@ MODULE
 
   describe :file do
     it "can load a file correctly" do
-      parser.load_file(file_path).should eq(file_content)
+      parser.load_file(relative: file_path).should eq(file_content)
+    end
+
+    it "can load an KW Rocketry engine file correctly" do
+      parser.load_file(relative: mengine_path)
+      parser.parse
+      parser.transform.should_not be_nil
     end
 
     it "sets file_content attribute correctly" do
-      parser.load_file(file_path)
+      parser.load_file(relative: file_path)
       parser.file_content.should eq(file_content)
     end
 

@@ -7,6 +7,7 @@ describe KspCfg::Parser::Cfg do
 
   let(:parser)              { KspCfg::Parser::Cfg.new }
 
+
   # basic assignments
   let(:assignment)          { "name = value" }
   let(:assignment_int)      { "name = 20" }
@@ -172,8 +173,7 @@ describe KspCfg::Parser::Cfg do
         value: [
           { float: "12.5" },
           { integer: "3" },
-          { string: "some_stuff" },
-          { boolean: "False" }
+          { string: "some_stuff, False" }
         ]
       })
     end

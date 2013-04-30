@@ -11,6 +11,8 @@ describe KspCfg::Models::Propellant do
   let(:first_resource_hash)    {{ name: "ElectricCharge", amount: 0, maxAmount: 0 }}
   let(:second_resource_hash)   {{ name: "LiquidFuel", amount: 810, maxAmount: 810 }}
   let(:third_resource_hash)    {{ name: "Oxidizer", amount: 0, maxAmount: 990 }}
+  let(:fourth_resource_hash)   {{ name: "LiquidFuel", amount: 2880, maxAmount: 2880 }}
+  let(:fith_resource_hash)     {{ name: "Oxidizer", amount: 3520, maxAmount: 3520 }}
 
   let(:invalid_one)            {{ name: "Some name", amount: 0 }}
   let(:invalid_two)            {{ propellant: { name: "XenonGas", ratio: 0.1 } }}
@@ -64,6 +66,16 @@ describe KspCfg::Models::Propellant do
       propellant.ppu.should             eq(1/6.to_f)
       propellant.density.should         eq(0.005)
       propellant.mass.should            eq(0.0)
+    end
+  end
+
+  describe "cost" do
+    it "calculates liquid fuel correctly" do
+      propellant = KspCfg::Models::Propellant.new(fourth_resource_hash)
+      propellant.cost(2).should            be_between(4500, 6500)
+
+      propellant = KspCfg::Models::Propellant.new(fith_resource_hash)
+      propellant.cost(2).should            be_between(2000, 3000)
     end
   end
 

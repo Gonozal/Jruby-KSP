@@ -25,7 +25,7 @@
         <key>MainClass</key>
         <string>org.monkeybars.rawr.Main</string>
         <key>JVMVersion</key>
-        <string>1.7*</string>
+        <string>1.6*</string>
         <key>ClassPath</key>
             <array>
                 <string>$JAVAROOT/jruby_ksp.jar</string>
